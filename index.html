@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#1d4e89">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Delivery Checker</title>
+<style>
+:root{--bg:#eef1f4;--card:#fff;--ink:#16212b;--mut:#5d6b78;--line:#d8dee4;--acc:#1d4e89;--on:#fff;
+--up:#0f7b4f;--dn:#b4322a;--upbg:#dff1e7;--wk:#8a6212;--wkbg:#f5ecd2;--md:#3b5b80;--mdbg:#e2eaf3}
+@media(prefers-color-scheme:dark){:root{--bg:#0f151b;--card:#172029;--ink:#e6ecf1;--mut:#8fa0af;--line:#27323d;--acc:#6fa8e8;--on:#0f151b;
+--up:#58c98c;--dn:#ef8b80;--upbg:#14301f;--wk:#dcbc62;--wkbg:#392f15;--md:#8fb2d6;--mdbg:#1c2937}}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.wrap{max-width:1240px;margin:0 auto;padding:20px 14px 48px}
+h1{font-size:22px;margin:0 0 2px}
+h3{font-size:14px;margin:0 0 6px;color:var(--mut);font-weight:600}
+.sub{color:var(--mut);margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:16px}
+textarea{width:100%;height:130px;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;resize:vertical}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-top:12px}
+label{font-size:13px;color:var(--mut);display:flex;flex-direction:column;gap:3px}
+input,select{font:inherit;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:130px}
+select{width:210px}
+button{font:inherit;font-weight:600;padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}
+button.p{background:var(--acc);border-color:var(--acc);color:var(--on)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;margin-bottom:16px}
+.tiles .card{margin:0}
+.big{font-size:34px;font-weight:700;line-height:1.1;margin:2px 0 2px}
+.m{color:var(--mut);margin:6px 0 0;font-size:13px}
+.up{color:var(--up)}.dn{color:var(--dn)}.mut{color:var(--mut)}.warn{color:var(--wk)}
+.pill{display:inline-block;padding:1px 9px;border-radius:99px;font-weight:600;font-size:12px}
+.pill.strong{background:var(--upbg);color:var(--up)}.pill.medium{background:var(--mdbg);color:var(--md)}.pill.weak{background:var(--wkbg);color:var(--wk)}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:4px 0;border-bottom:1px solid var(--line)}
+.tw{overflow:auto;max-height:72vh;border:1px solid var(--line);border-radius:8px;background:var(--card);margin-bottom:16px}
+table{border-collapse:collapse;width:100%;white-space:nowrap}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line)}
+th{position:sticky;top:0;background:var(--card);color:var(--mut);font-weight:600;font-size:12px;border-bottom:2px solid var(--line)}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2),th:nth-last-child(-n+3),td:nth-last-child(-n+3){text-align:left}
+small{color:var(--mut)}
+details summary{cursor:pointer;font-weight:600}
+details ul{margin:8px 0 0;padding-left:20px;color:var(--mut)}
+.err{color:var(--dn)}
+.fine{margin-top:12px;color:var(--mut)}
+@media(max-width:560px){input,select,label{width:100%}.big{font-size:30px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Delivery Checker</h1>
+<p class="sub">Find out whether real investors are behind a price move. Delivery % is the share of traded shares that people actually took home instead of selling the same day. When it is high, more genuine buyers or sellers are involved and fewer day-traders.</p>
+
+<div class="card">
+<label>Paste your NSE data below. Copy the rows from NSE's historical data page; the heading line is optional.
+<textarea id="raw" placeholder="SPARC	EQ	08-Nov-2026	193.52	196.26	198.35	195.46	197.40	197.03	197.14	2,81,092	5,54,14,920.70	3,661	1,58,188	56.28"></textarea></label>
+<div class="row">
+<label>When did this move begin?<select id="sw"></select></label>
+<button id="clr">Clear data</button>
+<button id="inst" class="p" hidden>Install on this device</button>
+</div>
+<details class="fine"><summary>Fine-tune</summary>
+<div class="row">
+<label>How many earlier days count as "usual"?<input id="w" type="number" value="20" min="5" max="60"></label>
+<label>How many times the usual counts as strong?<input id="s" type="number" value="1.3" step="0.05" min="1"></label>
+</div></details>
+</div>
+
+<div id="out"></div>
+
+<details class="card">
+<summary>How does it decide?</summary>
+<ul>
+<li>"Usual" is the average of the days right before that day. We need at least 5 earlier days, and 20 or more works best.</li>
+<li>Each day is checked two ways: its delivery %, and the number of shares delivered. Each check earns 2 points if it is at least your "strong" level above usual (1.3 times by default), 1 point if it is at or above usual, and 0 if it is below.</li>
+<li>3 or 4 points is Strong, 2 is Medium, and 0 or 1 is Weak.</li>
+<li>A high number only counts if it beats this stock's own habit. If a stock delivers around 59% almost every day, then 59% is just its usual, so it will show as Medium or Weak.</li>
+<li>If very few shares traded that day (under 0.6 times usual), the verdict is lowered one step, because a high % on very few trades is not reliable.</li>
+<li>The price direction tells you whether it was buying or selling.</li>
+<li>Weekend dates are special sessions (like Diwali Muhurat trading) and usually look unusual, so take them lightly.</li>
+<li>"Since the move began" starts from the date you pick. By default that is the day with the lowest price in your data.</li>
+</ul>
+</details>
+
+<details class="card">
+<summary>Using it on your phone</summary>
+<ul>
+<li>Android (Chrome): open the website, tap the menu, then "Install app" or "Add to Home screen".</li>
+<li>iPhone (Safari): tap Share, then "Add to Home Screen".</li>
+<li>After your first visit it also opens without internet. Your data stays on your device and is never uploaded.</li>
+</ul>
+<p class="m">This is a learning tool, not investment advice.</p>
+</details>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const num=s=>parseFloat(String(s).replace(/,/g,''));
+const MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const fmt=(x,d=2)=>isFinite(x)?x.toLocaleString('en-IN',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
+const valid=r=>isFinite(r.dp)&&isFinite(r.dq);
+const avg=(a,k)=>a.length?a.reduce((s,x)=>s+x[k],0)/a.length:NaN;
+const sum=(a,k)=>a.reduce((s,x)=>s+x[k],0);
+const dirOf=r=>r.chg>0?'up':r.chg<0?'down':'flat';
+const READ={Strong:{up:'Genuine buying. Investors are taking shares home.',down:'Genuine selling. Holders are getting out.',flat:'Lots of shares were taken home, but the price stayed put.'},
+Medium:{up:'Some real buying behind the rise.',down:'Some real selling behind the fall.',flat:'A normal, quiet day.'},
+Weak:{up:'The price rose, but mostly day-traders were involved. Not convincing yet.',down:'The price fell, but few holders sold. No panic.',flat:'Hardly anyone was interested.'}};
+const pill=s=>`<span class="pill ${s.toLowerCase()}">${s}</span>`;
+const sgn=x=>(x>=0?'+':'')+fmt(x);
+
+function parse(txt){
+  const seen=new Set(),rows=[];
+  for(const line of txt.split(/\r?\n/)){
+    const t=line.trim().split(/\s+/);
+    const i=t.findIndex(x=>/^\d{1,2}-[A-Za-z]{3}-\d{4}$/.test(x));
+    if(i<1||t.length<i+13)continue;
+    const [pc,o,h,l,last,c,vw,vol,turn,tr,dq,dp]=t.slice(i+1,i+13).map(num);
+    const [dd,mm,yy]=t[i].split('-');
+    const d=new Date(+yy,MON[mm.toLowerCase()],+dd);
+    const key=t[0]+t[i];
+    if(isNaN(d)||![pc,l,c,vol].every(isFinite)||seen.has(key))continue;
+    seen.add(key);
+    rows.push({sym:t[0],ds:t[i],d,pc,l,c,vol,dq,dp:isFinite(dp)?dp:dq/vol*100});
+  }
+  const s=rows.length?rows[0].sym:'';
+  return rows.filter(r=>r.sym===s).sort((a,b)=>a.d-b.d);
+}
+
+function analyze(rows,W,S){
+  const pts=x=>x>=S?2:x>=1?1:0;
+  rows.forEach((r,i)=>{
+    const p=rows.slice(Math.max(0,i-W),i).filter(valid);
+    r.n=p.length;r.chg=(r.c/r.pc-1)*100;r.flags=[];r.sig=null;
+    if(r.d.getDay()%6===0)r.flags.push('This was a weekend or special trading session, so the numbers can look odd');
+    if(p.length<5||!valid(r))return;
+    r.adp=avg(p,'dp');r.rdp=r.dp/r.adp;
+    r.rvol=r.vol/avg(p,'vol');r.rdq=r.dq/avg(p,'dq');
+    const sc=pts(r.rdp)+pts(r.rdq);
+    let lv=sc>=3?2:sc===2?1:0;
+    if(r.rvol<0.6){lv=Math.max(0,lv-1);r.flags.push('Very few shares traded that day, so we lowered the verdict one step')}
+    if(r.rvol>=2)r.flags.push('Unusually busy day for trading');
+    r.sig=['Weak','Medium','Strong'][lv];
+  });
+}
+
+function why(r,S){
+  const w=x=>x>=S?'well above':x>=1?'a little above':'below';
+  return `delivery % was ${w(r.rdp)} its usual level (${fmt(r.rdp)} times usual), and the number of shares delivered was ${w(r.rdq)} usual (${fmt(r.rdq)} times usual).`;
+}
+
+function summary(rows,W,S,swDs){
+  const L=rows[rows.length-1],cls=L.chg>=0?'up':'dn';
+  const t1=`<div class="card"><h3>The latest day, ${L.ds}</h3><div class="big">${fmt(L.dp)}%</div><p class="m">of the shares traded that day were taken as delivery</p>`+
+    (L.sig?`<p>${pill(L.sig)} <b class="${cls}">${READ[L.sig][dirOf(L)]}</b></p>
+    <p class="m">Why: ${why(L,S)}</p>
+    <p class="m">Usual means this stock's own recent average, which was ${fmt(L.adp)}% over the ${L.n} days before.</p>`
+    :`<p class="m">We need at least 5 earlier days to know what is usual for this stock, so there is no verdict yet.</p>`)+
+    (L.flags.length?`<p class="m warn">${L.flags.join('. ')}.</p>`:'')+`</div>`;
+
+  const si=Math.max(0,rows.findIndex(r=>r.ds===swDs)),all=rows.slice(si).filter(valid),bs=rows.slice(Math.max(0,si-W),si).filter(valid);
+  const up=all.filter(r=>r.chg>0),dn=all.filter(r=>r.chg<0),swAvg=avg(all,'dp');
+  let t3=`<div class="card"><h3>Since the move began on ${rows[si].ds}, ${rows.length-si} days</h3><div class="big">${fmt(swAvg)}%</div><p class="m">of the shares traded each day were delivered, on average</p>`;
+  if(bs.length>=3){
+    const b=avg(bs,'dp'),r=swAvg/b;
+    t3+=`<p>Compared with before the move (${fmt(b)}% over ${bs.length} days), delivery is <b class="${r>=1.1?'up':r<=0.9?'dn':''}">${r>=S?'much higher':r>=1.1?'higher':r<=0.9?'lower':'about the same'}</b>.</p>`;
+  }else t3+=`<p class="m warn">Your data has no days from before the move, so we can't tell whether ${fmt(swAvg)}% is high or low for this stock. Paste 20 or more earlier days to find out.</p>`;
+  t3+=`<div class="kv"><span>Overall, counting every share traded</span><b>${fmt(sum(all,'dq')/sum(all,'vol')*100)}%</b></div>`;
+  if(up.length&&dn.length){
+    const uq=sum(up,'dq'),share=uq/(uq+sum(dn,'dq'))*100,ud=avg(up,'dp'),dd=avg(dn,'dp');
+    const acc=share>=60&&ud>=dd,dis=share<=40&&ud<=dd;
+    t3+=`<div class="kv"><span>Average on the ${up.length} days the price went up</span><b>${fmt(ud)}%</b></div>
+    <div class="kv"><span>Average on the ${dn.length} days it went down</span><b>${fmt(dd)}%</b></div>
+    <div class="kv"><span>Delivered shares that came on up days</span><b>${fmt(share,1)}%</b></div>
+    <div class="kv"><span>Price now vs the low on the start day (${fmt(rows[si].l)})</span><b class="${L.c>=rows[si].l?'up':'dn'}">${sgn((L.c/rows[si].l-1)*100)}%</b></div>
+    <p><b class="${acc?'up':dis?'dn':''}">${acc?'Buyers look to be in control.':dis?'Sellers look to be in control.':'No clear winner yet.'}</b> ${acc?'Most delivered shares came on days the price went up, which points to genuine buying.':dis?'Most delivered shares came on days the price went down, which points to holders selling.':'Delivered shares are spread fairly evenly between up days and down days.'}</p>`;
+  }else t3+=`<p class="m">We need both up days and down days after the start to compare them.</p>`;
+  return `<div class="tiles">${t1+t3}</div></div>`;
+}
+
+function table(rows,S){
+  const x=(r,k)=>r.sig?`<span class="${r[k]>=S?'up':r[k]<1?'mut':''}">${fmt(r[k])}×</span>`:'—';
+  const body=[...rows].reverse().map(r=>{
+    const c=r.chg>=0?'up':'dn';
+    return `<tr><td>${r.ds}</td><td>${DOW[r.d.getDay()]}</td><td>${fmt(r.c)}</td><td class="${c}">${sgn(r.chg)}%</td>
+    <td>${fmt(r.vol,0)}</td><td>${fmt(r.dq,0)}</td><td><b>${fmt(r.dp)}</b></td>
+    <td>${r.sig?fmt(r.adp)+' <small>('+r.n+' days)</small>':'—'}</td><td>${x(r,'rdp')}</td><td>${x(r,'rvol')}</td><td>${x(r,'rdq')}</td>
+    <td>${r.sig?pill(r.sig):'—'}</td><td class="${c}">${r.sig?READ[r.sig][dirOf(r)]:'—'}</td><td class="mut">${r.flags.join('. ')}</td></tr>`;
+  }).join('');
+  return `<div class="tw"><table><thead><tr><th>Date</th><th>Day</th><th>Closed at</th><th>Price moved</th><th>Shares traded</th><th>Shares delivered</th><th>Delivery %</th><th>Usual delivery %</th><th>Delivery vs usual</th><th>Trading vs usual</th><th>Delivered shares vs usual</th><th>Verdict</th><th>What it means</th><th>Notes</th></tr></thead><tbody>${body}</tbody></table></div>`;
+}
+
+function run(rebuild){
+  const W=Math.max(5,+$('w').value||20),S=Math.max(1,+$('s').value||1.3),sel=$('sw'),out=$('out');
+  const rows=parse($('raw').value);
+  if(!rows.length){
+    out.innerHTML=$('raw').value.trim()?'<div class="card err">We could not find any rows. Paste rows from the NSE table. Each row should have a date like 08-Nov-2026 followed by the numbers.</div>':'<div class="card m">Paste your data above and the results will show up here.</div>';
+    sel.innerHTML='';return;
+  }
+  analyze(rows,W,S);
+  if(rebuild||!sel.value){
+    const low=rows.reduce((m,r)=>r.l<m.l?r:m,rows[0]);
+    sel.innerHTML=rows.map(r=>`<option value="${r.ds}">${r.ds} (low ${fmt(r.l)})</option>`).join('');
+    sel.value=low.ds;
+  }
+  out.innerHTML=summary(rows,W,S,sel.value)+table(rows,S);
+}
+$('raw').addEventListener('input',()=>run(true));
+['w','s'].forEach(id=>$(id).addEventListener('input',()=>run(false)));
+$('sw').addEventListener('change',()=>run(false));
+$('clr').onclick=()=>{$('raw').value='';run(true)};
+let ip;addEventListener('beforeinstallprompt',e=>{e.preventDefault();ip=e;$('inst').hidden=false});
+$('inst').onclick=()=>{ip.prompt();$('inst').hidden=true};
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
+run(true);
+</script>
+</body>
+</html>
