@@ -11,124 +11,91 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Delivery Checker</title>
 <style>
-:root{--bg:#eef1f4;--card:#fff;--ink:#16212b;--mut:#5d6b78;--line:#d8dee4;--acc:#1d4e89;--on:#fff;
---up:#0f7b4f;--dn:#b4322a;--upbg:#dff1e7;--wk:#8a6212;--wkbg:#f5ecd2;--md:#3b5b80;--mdbg:#e2eaf3}
-@media(prefers-color-scheme:dark){:root{--bg:#0f151b;--card:#172029;--ink:#e6ecf1;--mut:#8fa0af;--line:#27323d;--acc:#6fa8e8;--on:#0f151b;
---up:#58c98c;--dn:#ef8b80;--upbg:#14301f;--wk:#dcbc62;--wkbg:#392f15;--md:#8fb2d6;--mdbg:#1c2937}}
+:root{--bg:#eef1f4;--card:#fff;--ink:#16212b;--mut:#5d6b78;--line:#d8dee4;--acc:#1d4e89;--on:#fff;--up:#0f7b4f;--dn:#b4322a;--upbg:#dff1e7;--wk:#8a6212;--wkbg:#f5ecd2;--md:#3b5b80;--mdbg:#e2eaf3}
+@media(prefers-color-scheme:dark){:root{--bg:#0f151b;--card:#172029;--ink:#e6ecf1;--mut:#8fa0af;--line:#27323d;--acc:#6fa8e8;--on:#0f151b;--up:#58c98c;--dn:#ef8b80;--upbg:#14301f;--wk:#dcbc62;--wkbg:#392f15;--md:#8fb2d6;--mdbg:#1c2937}}
 *{box-sizing:border-box}[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-.wrap{max-width:1240px;margin:0 auto;padding:20px 14px 48px}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 14px 48px}
 h1{font-size:22px;margin:0 0 2px}
 h3{font-size:14px;margin:0 0 6px;color:var(--mut);font-weight:600}
 .sub{color:var(--mut);margin:0 0 14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:16px}
-textarea{width:100%;height:130px;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;resize:vertical}
+textarea{width:100%;height:120px;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px;resize:vertical}
 .row{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-top:12px}
 label{font-size:13px;color:var(--mut);display:flex;flex-direction:column;gap:3px}
 input,select{font:inherit;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:130px}
-select{width:210px}
+select{width:180px}
 button{font:inherit;font-weight:600;padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--mut);cursor:pointer}
 button.p{background:var(--acc);border-color:var(--acc);color:var(--on)}
 :focus-visible{outline:2px solid var(--acc);outline-offset:1px}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;margin-bottom:16px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start;margin-bottom:16px}
 .tiles .card{margin:0}
 .big{font-size:34px;font-weight:700;line-height:1.1;margin:2px 0 2px}
+.vd{font-size:26px;font-weight:700;margin:2px 0 4px}
 .m{color:var(--mut);margin:6px 0 0;font-size:13px}
-.up{color:var(--up)}.dn{color:var(--dn)}.mut{color:var(--mut)}.warn{color:var(--wk)}
+.up,.ok{color:var(--up)}.dn,.no{color:var(--dn)}.mut{color:var(--mut)}.warn{color:var(--wk)}.ok,.no{font-weight:700}
 .pill{display:inline-block;padding:1px 9px;border-radius:99px;font-weight:600;font-size:12px}
 .pill.strong{background:var(--upbg);color:var(--up)}.pill.medium{background:var(--mdbg);color:var(--md)}.pill.weak{background:var(--wkbg);color:var(--wk)}
-.kv{display:flex;justify-content:space-between;gap:12px;padding:4px 0;border-bottom:1px solid var(--line)}
-.tw{overflow:auto;max-height:72vh;border:1px solid var(--line);border-radius:8px;background:var(--card);margin-bottom:16px}
-table{border-collapse:collapse;width:100%;white-space:nowrap}
+.chk{list-style:none;margin:8px 0 0;padding:0}.chk li{padding:5px 0;border-bottom:1px solid var(--line)}.chk li:last-child{border:0}
+table{border-collapse:collapse;width:100%}
 th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line)}
-th{position:sticky;top:0;background:var(--card);color:var(--mut);font-weight:600;font-size:12px;border-bottom:2px solid var(--line)}
-th:first-child,td:first-child,th:nth-child(2),td:nth-child(2),th:nth-last-child(-n+3),td:nth-last-child(-n+3){text-align:left}
-small{color:var(--mut)}
+th{color:var(--mut);font-weight:600;font-size:12px}
+.mini{margin:10px 0}.mini td:first-child,.mini th:first-child{text-align:left}
+.tw{overflow:auto;max-height:70vh;border:1px solid var(--line);border-radius:8px;background:var(--card);margin-bottom:16px}
+.tw table{white-space:nowrap}.tw th{position:sticky;top:0;background:var(--card);border-bottom:2px solid var(--line)}
+.tw td:nth-child(-n+2),.tw th:nth-child(-n+2),.tw td:nth-last-child(-n+2),.tw th:nth-last-child(-n+2){text-align:left}
 details summary{cursor:pointer;font-weight:600}
 details ul{margin:8px 0 0;padding-left:20px;color:var(--mut)}
 .err{color:var(--dn)}
-.fine{margin-top:12px;color:var(--mut)}
-.vd{font-size:26px;font-weight:700;margin:2px 0 4px}.chk{list-style:none;margin:8px 0 0;padding:0}.chk li{padding:5px 0;border-bottom:1px solid var(--line)}.chk li:last-child{border:0}.ok{color:var(--up);font-weight:700}.no{color:var(--dn);font-weight:700}
 @media(max-width:560px){input,select,label{width:100%}.big{font-size:30px}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <h1>Delivery Checker</h1>
-<p class="sub">Find out whether real investors are behind a price move. Delivery % is the share of traded shares that people actually took home instead of selling the same day. When it is high, more genuine buyers or sellers are involved and fewer day-traders.</p>
+<p class="sub">Paste your NSE data to see whether real buyers or sellers are behind the price. "Delivery" means shares that were taken home, not sold again the same day.</p>
 
 <div class="card">
-<label>Paste your NSE data below. Copy the rows from NSE's historical data page; the heading line is optional.
+<label>Paste the NSE rows here
 <textarea id="raw" placeholder="SPARC	EQ	08-Nov-2026	193.52	196.26	198.35	195.46	197.40	197.03	197.14	2,81,092	5,54,14,920.70	3,661	1,58,188	56.28"></textarea></label>
 <div class="row">
 <label>Trendline price today<input id="tl" type="number" step="0.01" placeholder="e.g. 190"></label>
 <label>Days to look back<input id="nd" type="number" value="5" min="2" max="30"></label>
-<label>When did this move begin?<select id="sw"></select></label>
-<button id="clr">Clear data</button>
-<button id="inst" class="p" hidden>Install on this device</button>
+<label>Move started on<select id="sw"></select></label>
+<button id="clr">Clear</button>
+<button id="inst" class="p" hidden>Install app</button>
 </div>
-<details class="fine"><summary>Fine-tune</summary>
-<div class="row">
-<label>How many earlier days count as "usual"?<input id="w" type="number" value="20" min="5" max="60"></label>
-<label>How many times the usual counts as strong?<input id="s" type="number" value="1.3" step="0.05" min="1"></label>
-<label>Long call: delivery at least (times usual)<input id="td" type="number" value="1.2" step="0.05" min="1"></label>
-<label>Long call: trading at least (times usual)<input id="tv" type="number" value="1.5" step="0.05" min="1"></label>
-</div></details>
 </div>
 
 <div id="out"></div>
 
 <details class="card">
-<summary>How does it decide?</summary>
+<summary>How it works</summary>
 <ul>
-<li>"Usual" is the average of the days right before that day. We need at least 5 earlier days, and 20 or more works best.</li>
-<li>Each day is checked two ways: its delivery %, and the number of shares delivered. Each check earns 2 points if it is at least your "strong" level above usual (1.3 times by default), 1 point if it is at or above usual, and 0 if it is below.</li>
-<li>3 or 4 points is Strong, 2 is Medium, and 0 or 1 is Weak.</li>
-<li>A high number only counts if it beats this stock's own habit. If a stock delivers around 59% almost every day, then 59% is just its usual, so it will show as Medium or Weak.</li>
-<li>If very few shares traded that day (under 0.6 times usual), the verdict is lowered one step, because a high % on very few trades is not reliable.</li>
-<li>The price direction tells you whether it was buying or selling.</li>
-<li>Weekend dates are special sessions (like Diwali Muhurat trading) and usually look unusual, so take them lightly.</li>
-<li>"Since the move began" starts from the date you pick. By default that is the day with the lowest price in your data.</li>
+<li>A green day closed above its open. A red day closed at or below it.</li>
+<li>All averages count busy days more than quiet days: total shares delivered divided by total shares traded. "Delivered per day" is the average number of delivered shares per day.</li>
+<li>Buyers or sellers "in control" means one colour of day delivered at least 20% more shares per day than the other.</li>
+<li>"Normal" is the average of the 20 days before that day (at least 5 are needed). Strong, Medium and Weak compare a day with normal. Days with very few shares traded are marked down.</li>
+<li>"Looks OK to go long" needs all 8 checks to pass: above the trendline, green candle, closed near the top, delivery 1.2 times normal, trading 1.5 times normal, recent closes strong, green days delivering at least as much as red days, and few selling days (1 allowed per 5 days).</li>
 </ul>
 </details>
 
-<details class="card">
-<summary>How is the "go long" call made?</summary>
-<ul>
-<li>It looks at the latest day and at the last few days you choose. 5 to 10 days works best, and 2 or 3 days is too little to trust.</li>
-<li>For the latest day it wants a close above your trendline, a green candle, a close in the top third of the day's range, delivery at least 1.2 times usual, and trading volume at least 1.5 times usual.</li>
-<li>For the last few days it wants a positive average day score (closing near the high on heavy delivery scores up, closing near the low on heavy delivery scores down), delivery on green days at least as high as on red days, and not too many possible selling days (one is allowed for every 5 days).</li>
-<li>A possible selling day is a red candle that closes in the bottom third of its range on delivery well above usual.</li>
-<li>Every check must pass for "Looks OK to go long". You can change the 1.2 and 1.5 under Fine-tune and test what works on past data.</li>
-</ul>
-</details>
-
-<details class="card">
-<summary>Using it on your phone</summary>
-<ul>
-<li>Android (Chrome): open the website, tap the menu, then "Install app" or "Add to Home screen".</li>
-<li>iPhone (Safari): tap Share, then "Add to Home Screen".</li>
-<li>After your first visit it also opens without internet. Your data stays on your device and is never uploaded.</li>
-</ul>
-<p class="m">This is a learning tool, not investment advice.</p>
-</details>
+<p class="m">To use it like an app: Android Chrome menu, then "Install app". iPhone Safari: Share, then "Add to Home Screen". Your data stays on your device.</p>
 </div>
 
 <script>
 const $=id=>document.getElementById(id);
 const num=s=>parseFloat(String(s).replace(/,/g,''));
 const MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
-const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const fmt=(x,d=2)=>isFinite(x)?x.toLocaleString('en-IN',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
+const pc=x=>isFinite(x)?fmt(x)+'%':'—';
 const valid=r=>isFinite(r.dp)&&isFinite(r.dq);
 const avg=(a,k)=>a.length?a.reduce((s,x)=>s+x[k],0)/a.length:NaN;
 const sum=(a,k)=>a.reduce((s,x)=>s+x[k],0);
-const dirOf=r=>r.chg>0?'up':r.chg<0?'down':'flat';
-const READ={Strong:{up:'Genuine buying. Investors are taking shares home.',down:'Genuine selling. Holders are getting out.',flat:'Lots of shares were taken home, but the price stayed put.'},
-Medium:{up:'Some real buying behind the rise.',down:'Some real selling behind the fall.',flat:'A normal, quiet day.'},
-Weak:{up:'The price rose, but mostly day-traders were involved. Not convincing yet.',down:'The price fell, but few holders sold. No panic.',flat:'Hardly anyone was interested.'}};
 const pill=s=>`<span class="pill ${s.toLowerCase()}">${s}</span>`;
 const sgn=x=>(x>=0?'+':'')+fmt(x);
+const grp=a=>({n:a.length,tr:sum(a,'vol'),dl:sum(a,'dq'),pct:sum(a,'dq')/sum(a,'vol')*100,per:a.length?sum(a,'dq')/a.length:0});
+const TD=1.2,TV=1.5;
 
 function parse(txt){
   const seen=new Set(),rows=[];
@@ -138,8 +105,7 @@ function parse(txt){
     if(i<1||t.length<i+13)continue;
     const [pc,o,h,l,last,c,vw,vol,turn,tr,dq,dp]=t.slice(i+1,i+13).map(num);
     const [dd,mm,yy]=t[i].split('-');
-    const d=new Date(+yy,MON[mm.toLowerCase()],+dd);
-    const key=t[0]+t[i];
+    const d=new Date(+yy,MON[mm.toLowerCase()],+dd),key=t[0]+t[i];
     if(isNaN(d)||![pc,o,h,l,c,vol].every(isFinite)||seen.has(key))continue;
     seen.add(key);
     rows.push({sym:t[0],ds:t[i],d,pc,o,h,l,c,vol,dq,dp:isFinite(dp)?dp:dq/vol*100});
@@ -148,115 +114,91 @@ function parse(txt){
   return rows.filter(r=>r.sym===s).sort((a,b)=>a.d-b.d);
 }
 
-function analyze(rows,W,S){
-  const pts=x=>x>=S?2:x>=1?1:0;
+function analyze(rows){
+  const pts=x=>x>=1.3?2:x>=1?1:0;
   rows.forEach((r,i)=>{
-    const p=rows.slice(Math.max(0,i-W),i).filter(valid);
-    r.n=p.length;r.chg=(r.c/r.pc-1)*100;r.flags=[];r.sig=null;r.green=r.c>r.o;r.pos=r.h===r.l?0.5:(r.c-r.l)/(r.h-r.l);r.score=NaN;r.dist=false;
-    if(r.d.getDay()%6===0)r.flags.push('This was a weekend or special trading session, so the numbers can look odd');
+    const p=rows.slice(Math.max(0,i-20),i).filter(valid);
+    r.chg=(r.c/r.pc-1)*100;r.flags=[];r.sig=null;r.green=r.c>r.o;
+    r.pos=r.h===r.l?0.5:(r.c-r.l)/(r.h-r.l);r.score=NaN;r.dist=false;
+    if(r.d.getDay()%6===0)r.flags.push('Weekend or special session, so numbers can look odd');
     if(p.length<5||!valid(r))return;
-    r.adp=avg(p,'dp');r.rdp=r.dp/r.adp;
+    r.adp=sum(p,'dq')/sum(p,'vol')*100;r.rdp=r.dp/r.adp;
     r.rvol=r.vol/avg(p,'vol');r.rdq=r.dq/avg(p,'dq');
-    const sc=pts(r.rdp)+pts(r.rdq);
-    let lv=sc>=3?2:sc===2?1:0;
-    if(r.rvol<0.6){lv=Math.max(0,lv-1);r.flags.push('Very few shares traded that day, so we lowered the verdict one step')}
-    if(r.rvol>=2)r.flags.push('Unusually busy day for trading');
+    let lv=pts(r.rdp)+pts(r.rdq);lv=lv>=3?2:lv===2?1:0;
+    if(r.rvol<0.6){lv=Math.max(0,lv-1);r.flags.push('Very few shares traded, so the signal was lowered')}
+    if(r.rvol>=2)r.flags.push('Unusually busy day');
     r.sig=['Weak','Medium','Strong'][lv];
     r.score=(r.pos-0.5)*2*r.rdp;r.dist=!r.green&&r.pos<0.33&&r.rdp>1.2;
-    if(r.dist)r.flags.push('Possible selling by holders: red candle, closed near the low, heavy delivery');
+    if(r.dist)r.flags.push('Red day closing near the low on high delivery, a sign of selling');
   });
 }
 
-function why(r,S){
-  const w=x=>x>=S?'well above':x>=1?'a little above':'below';
-  return `delivery % was ${w(r.rdp)} its usual level (${fmt(r.rdp)} times usual), and the number of shares delivered was ${w(r.rdq)} usual (${fmt(r.rdq)} times usual).`;
-}
-
-function verdictCard(rows,c){
-  const L=rows[rows.length-1],win=rows.slice(-c.N),sc=win.filter(r=>isFinite(r.score));
-  const g=win.filter(r=>r.green&&isFinite(r.dp)),rd=win.filter(r=>!r.green&&isFinite(r.dp));
-  const avS=avg(sc,'score'),gd=g.length?avg(g,'dp'):0,rdv=rd.length?avg(rd,'dp'):0;
-  const dist=win.filter(r=>r.dist).length,allow=Math.floor(win.length/5),hasTL=isFinite(c.TL),hasB=isFinite(L.rdp);
-  const zone=L.pos>=0.67?'the top third':L.pos<0.33?'the bottom third':'the middle',need='We need at least 5 earlier days to know what is usual for this stock.';
+function verdictCard(rows,N,TL){
+  const L=rows[rows.length-1],win=rows.slice(-N),v=win.filter(valid);
+  const g=grp(v.filter(r=>r.green)),rd=grp(v.filter(r=>!r.green));
+  const avS=avg(win.filter(r=>isFinite(r.score)),'score'),dist=win.filter(r=>r.dist).length,allow=Math.floor(win.length/5);
+  const hasTL=isFinite(TL),hasB=isFinite(L.rdp),need='We need at least 5 earlier days to know what is normal for this stock.';
   const k=[
-   [hasTL&&L.c>c.TL,!hasTL?`Type today's trendline price above so we can check the breakout.`:L.c>c.TL?`It closed above the trendline (${fmt(L.c)} vs ${fmt(c.TL)}).`:`It did not close above the trendline (${fmt(L.c)} vs ${fmt(c.TL)}).`],
-   [L.green,L.green?`Today is a green candle (closed above where it opened).`:`Today is a red candle (closed at or below where it opened).`],
-   [L.pos>=0.67,L.pos>=0.67?`It closed in the top third of the day's range.`:`It closed in ${zone} of the day's range, so sellers had the last word.`],
-   [hasB&&L.rdp>=c.TD,hasB?`Delivery was ${fmt(L.rdp)} times its usual level (needs at least ${fmt(c.TD)}).`:need],
-   [hasB&&L.rvol>=c.TV,hasB?`Trading volume was ${fmt(L.rvol)} times usual (needs at least ${fmt(c.TV)}).`:need],
-   [avS>0,isFinite(avS)?`Over the last ${win.length} days the average day score is ${fmt(avS)}. ${avS>0?'Days have been closing strong on real delivery.':'Days have not been closing strong on real delivery.'}`:`Not enough history to score the last days yet.`],
-   [gd>=rdv,`Average delivery is ${fmt(gd)}% on green days and ${fmt(rdv)}% on red days (${g.length} green, ${rd.length} red). ${gd>=rdv?'Buyers are taking home at least as many shares as sellers.':'Holders deliver more on red days, which is a warning sign.'}`],
-   [dist<=allow,`${dist} possible selling day${dist===1?'':'s'} in the last ${win.length} days (up to ${allow} is allowed). A selling day is a red candle that closes near its low on heavy delivery.`]];
+   [hasTL&&L.c>TL,!hasTL?`Type today's trendline price above to check this.`:L.c>TL?`Price closed above your trendline (${fmt(L.c)} vs ${fmt(TL)}).`:`Price did not close above your trendline (${fmt(L.c)} vs ${fmt(TL)}).`],
+   [L.green,L.green?`Today's candle is green (closed above where it opened).`:`Today's candle is red.`],
+   [L.pos>=0.67,L.pos>=0.67?`It closed near the top of the day's range.`:`It did not close near the top of the day's range, so sellers had the last word.`],
+   [hasB&&L.rdp>=TD,hasB?`Delivery was ${fmt(L.dp)}% against a normal of ${fmt(L.adp)}%, which is ${fmt(L.rdp)} times normal (needs ${TD} or more).`:need],
+   [hasB&&L.rvol>=TV,hasB?`${fmt(L.rvol)} times the normal number of shares traded today (needs ${TV} or more).`:need],
+   [avS>0,!isFinite(avS)?`Not enough history to judge the recent closes yet.`:avS>0?`Recent days mostly closed near their highs on good delivery.`:`Recent days did not mostly close near their highs on good delivery.`],
+   [g.per>=rd.per,`Green days delivered ${fmt(g.per,0)} shares per day and red days ${fmt(rd.per,0)} (${g.n} green, ${rd.n} red days).`],
+   [dist<=allow,`Selling days in the last ${win.length}: ${dist} (up to ${allow} is fine). These are red days that close near the low on high delivery.`]];
   const f=k.filter(x=>!x[0]).length,go=f===0;
-  const head=go?'Looks OK to go long':hasTL?'Stay out for now':'Type today\'s trendline price';
   return `<div class="card"><h3>Should you go long? Based on ${L.ds}</h3>
-  <div class="vd ${go?'up':hasTL?'dn':'warn'}">${head}</div>
+  <div class="vd ${go?'up':hasTL?'dn':'warn'}">${go?'Looks OK to go long':hasTL?'Stay out for now':`Type today's trendline price`}</div>
   <p class="m">${go?'Every check passed.':`${f} of ${k.length} checks did not pass.`}</p>
   <ul class="chk">${k.map(x=>`<li><span class="${x[0]?'ok':'no'}">${x[0]?'✓':'✗'}</span> ${x[1]}</li>`).join('')}</ul>
-  ${win.length<5?`<p class="m warn">With only ${win.length} days the last-days checks are weak. 5 to 10 days is better for decisions.</p>`:''}
-  ${go?`<p class="m">If you do go long, a common stop sits just below today's low (${fmt(L.l)}). Risk only a small fixed share of your money, enter only after the day's close, and skip trades around results.</p>`:''}
-  <p class="m">This tool can't see the wider market, so also check that the Nifty is closing above its 50-day average.</p>
+  ${win.length<5?`<p class="m warn">With only ${win.length} days the recent-days checks are weak. 5 to 10 days is better.</p>`:''}
+  ${go?`<p class="m">If you do buy, a common stop is just below today's low (${fmt(L.l)}). Risk only a small amount per trade, buy only after the day's close, and skip trades around results.</p>`:''}
+  <p class="m">This tool can't see the wider market, so also check that the Nifty is above its 50-day average.</p>
   <p class="m"><b>Educational, not financial advice. Backtest the thresholds before using real money.</b></p></div>`;
 }
 
-function summary(rows,W,S,swDs){
-  const L=rows[rows.length-1],cls=L.chg>=0?'up':'dn';
-  const t1=`<div class="card"><h3>The latest day, ${L.ds}</h3><div class="big">${fmt(L.dp)}%</div><p class="m">of the shares traded that day were taken as delivery</p>`+
-    (L.sig?`<p>${pill(L.sig)} <b class="${cls}">${READ[L.sig][dirOf(L)]}</b></p>
-    <p class="m">Why: ${why(L,S)}</p>
-    <p class="m">Usual means this stock's own recent average, which was ${fmt(L.adp)}% over the ${L.n} days before.</p>`
-    :`<p class="m">We need at least 5 earlier days to know what is usual for this stock, so there is no verdict yet.</p>`)+
-    (L.flags.length?`<p class="m warn">${L.flags.join('. ')}.</p>`:'')+`</div>`;
-
-  const si=Math.max(0,rows.findIndex(r=>r.ds===swDs)),all=rows.slice(si).filter(valid),bs=rows.slice(Math.max(0,si-W),si).filter(valid);
-  const up=all.filter(r=>r.green),dn=all.filter(r=>!r.green),swAvg=avg(all,'dp');
-  let t3=`<div class="card"><h3>Since the move began on ${rows[si].ds}, ${rows.length-si} days</h3><div class="big">${fmt(swAvg)}%</div><p class="m">of the shares traded each day were delivered, on average</p>`;
-  if(bs.length>=3){
-    const b=avg(bs,'dp'),r=swAvg/b;
-    t3+=`<p>Compared with before the move (${fmt(b)}% over ${bs.length} days), delivery is <b class="${r>=1.1?'up':r<=0.9?'dn':''}">${r>=S?'much higher':r>=1.1?'higher':r<=0.9?'lower':'about the same'}</b>.</p>`;
-  }else t3+=`<p class="m warn">Your data has no days from before the move, so we can't tell whether ${fmt(swAvg)}% is high or low for this stock. Paste 20 or more earlier days to find out.</p>`;
-  t3+=`<div class="kv"><span>Overall, counting every share traded</span><b>${fmt(sum(all,'dq')/sum(all,'vol')*100)}%</b></div>`;
-  if(up.length&&dn.length){
-    const uq=sum(up,'dq'),share=uq/(uq+sum(dn,'dq'))*100,ud=avg(up,'dp'),dd=avg(dn,'dp');
-    const acc=share>=60&&ud>=dd,dis=share<=40&&ud<=dd;
-    t3+=`<div class="kv"><span>Average on the ${up.length} green days (closed above the open)</span><b>${fmt(ud)}%</b></div>
-    <div class="kv"><span>Average on the ${dn.length} red days</span><b>${fmt(dd)}%</b></div>
-    <div class="kv"><span>Delivered shares that came on green days</span><b>${fmt(share,1)}%</b></div>
-    <div class="kv"><span>Price now vs the low on the start day (${fmt(rows[si].l)})</span><b class="${L.c>=rows[si].l?'up':'dn'}">${sgn((L.c/rows[si].l-1)*100)}%</b></div>
-    <p><b class="${acc?'up':dis?'dn':''}">${acc?'Buyers look to be in control.':dis?'Sellers look to be in control.':'No clear winner yet.'}</b> ${acc?'Most delivered shares came on green days, which points to genuine buying.':dis?'Most delivered shares came on red days, which points to holders selling.':'Delivered shares are spread fairly evenly between green days and red days.'}</p>`;
-  }else t3+=`<p class="m">We need both green and red days after the start to compare them.</p>`;
-  return `<div class="tiles">${t1+t3}</div></div>`;
+function swingCard(rows,si){
+  const all=rows.slice(si).filter(valid),g=grp(all.filter(r=>r.green)),r=grp(all.filter(x=>!x.green)),t=grp(all);
+  const bs=rows.slice(Math.max(0,si-20),si).filter(valid);
+  let h=`<div class="card"><h3>Since the move started on ${rows[si].ds} (${rows.length-si} days)</h3>
+  <div class="big">${pc(t.pct)}</div><p class="m">of all shares traded since then were taken as delivery</p>`;
+  if(bs.length>=3){const b=sum(bs,'dq')/sum(bs,'vol')*100,x=t.pct/b;
+    h+=`<p>Before the move it was ${pc(b)} (${bs.length} days), so delivery is now <b class="${x>=1.1?'up':x<=0.9?'dn':''}">${x>=1.1?'higher':x<=0.9?'lower':'about the same'}</b>.</p>`}
+  h+=`<table class="mini"><thead><tr><th></th><th>Green days</th><th>Red days</th></tr></thead><tbody>
+  <tr><td>Days</td><td>${g.n}</td><td>${r.n}</td></tr>
+  <tr><td>Shares traded</td><td>${fmt(g.tr,0)}</td><td>${fmt(r.tr,0)}</td></tr>
+  <tr><td>Shares delivered</td><td>${fmt(g.dl,0)}</td><td>${fmt(r.dl,0)}</td></tr>
+  <tr><td>Delivery %</td><td>${pc(g.pct)}</td><td>${pc(r.pct)}</td></tr>
+  <tr><td>Delivered per day</td><td><b>${fmt(g.per,0)}</b></td><td><b>${fmt(r.per,0)}</b></td></tr></tbody></table>`;
+  if(g.n&&r.n){const l=g.per>=r.per*1.2?1:r.per>=g.per*1.2?-1:0;
+    h+=`<p><b class="${l>0?'up':l<0?'dn':''}">${l>0?'Buyers look to be in control.':l<0?'Sellers look to be in control.':'No clear winner yet.'}</b> ${l>0?'Green days took home more shares per day than red days.':l<0?'Red days took home more shares per day than green days.':'Green and red days are close.'}</p>`}
+  else h+=`<p class="m">We need both green and red days to compare them.</p>`;
+  return h+`</div>`;
 }
 
-function table(rows,S){
-  const x=(r,k)=>r.sig?`<span class="${r[k]>=S?'up':r[k]<1?'mut':''}">${fmt(r[k])}×</span>`:'—';
-  const body=[...rows].reverse().map(r=>{
-    const c=r.chg>=0?'up':'dn';
-    return `<tr><td>${r.ds}</td><td>${DOW[r.d.getDay()]}</td><td>${fmt(r.c)}</td><td class="${c}">${sgn(r.chg)}%</td><td class="${r.green?'up':'dn'}">${r.green?'Green':'Red'}</td><td>${r.pos>=0.67?'Top third':r.pos<0.33?'Bottom third':'Middle'}</td>
-    <td>${fmt(r.vol,0)}</td><td>${fmt(r.dq,0)}</td><td><b>${fmt(r.dp)}</b></td>
-    <td>${r.sig?fmt(r.adp)+' <small>('+r.n+' days)</small>':'—'}</td><td>${x(r,'rdp')}</td><td>${x(r,'rvol')}</td><td>${x(r,'rdq')}</td>
-    <td>${r.sig?pill(r.sig):'—'}</td><td class="${c}">${r.sig?READ[r.sig][dirOf(r)]:'—'}</td><td class="mut">${r.flags.join('. ')}</td></tr>`;
-  }).join('');
-  return `<div class="tw"><table><thead><tr><th>Date</th><th>Day</th><th>Closed at</th><th>Price moved</th><th>Candle</th><th>Closed in</th><th>Shares traded</th><th>Shares delivered</th><th>Delivery %</th><th>Usual delivery %</th><th>Delivery vs usual</th><th>Trading vs usual</th><th>Delivered shares vs usual</th><th>Verdict</th><th>What it means</th><th>Notes</th></tr></thead><tbody>${body}</tbody></table></div>`;
+function table(rows){
+  const body=[...rows].reverse().map(r=>`<tr><td>${r.ds}</td><td class="${r.green?'up':'dn'}">${r.green?'Green':'Red'}</td><td class="${r.chg>=0?'up':'dn'}">${sgn(r.chg)}%</td><td>${fmt(r.vol,0)}</td><td>${fmt(r.dq,0)}</td><td><b>${fmt(r.dp)}</b></td><td>${r.sig?fmt(r.adp):'—'}</td><td>${r.sig?pill(r.sig):'—'}</td><td class="mut">${r.flags.join('. ')}</td></tr>`).join('');
+  return `<h3>Day by day</h3><div class="tw"><table><thead><tr><th>Date</th><th>Candle</th><th>Price moved</th><th>Shares traded</th><th>Shares delivered</th><th>Delivery %</th><th>Normal delivery %</th><th>Signal</th><th>Notes</th></tr></thead><tbody>${body}</tbody></table></div>`;
 }
 
 function run(rebuild){
-  const W=Math.max(5,+$('w').value||20),S=Math.max(1,+$('s').value||1.3),sel=$('sw'),out=$('out'),N=Math.max(2,Math.floor(+$('nd').value)||5),TL=parseFloat($('tl').value),TD=+$('td').value||1.2,TV=+$('tv').value||1.5;
-  const rows=parse($('raw').value);
+  const N=Math.max(2,Math.floor(+$('nd').value)||5),TL=parseFloat($('tl').value),sel=$('sw'),out=$('out'),rows=parse($('raw').value);
   if(!rows.length){
-    out.innerHTML=$('raw').value.trim()?'<div class="card err">We could not find any rows. Paste rows from the NSE table. Each row should have a date like 08-Nov-2026 followed by the numbers.</div>':'<div class="card m">Paste your data above and the results will show up here.</div>';
+    out.innerHTML=$('raw').value.trim()?'<div class="card err">We could not find any rows. Paste the rows from the NSE table. Each row has a date like 08-Nov-2026 followed by numbers.</div>':'<div class="card m">Paste your data above and the results will show here.</div>';
     sel.innerHTML='';return;
   }
-  analyze(rows,W,S);
+  analyze(rows);
   if(rebuild||!sel.value){
     const low=rows.reduce((m,r)=>r.l<m.l?r:m,rows[0]);
     sel.innerHTML=rows.map(r=>`<option value="${r.ds}">${r.ds} (low ${fmt(r.l)})</option>`).join('');
     sel.value=low.ds;
   }
-  out.innerHTML=verdictCard(rows,{N,TL,TD,TV})+summary(rows,W,S,sel.value)+table(rows,S);
+  const si=Math.max(0,rows.findIndex(r=>r.ds===sel.value));
+  out.innerHTML=`<div class="tiles">${verdictCard(rows,N,TL)}${swingCard(rows,si)}</div>`+table(rows);
 }
 $('raw').addEventListener('input',()=>run(true));
-['w','s','nd','tl','td','tv'].forEach(id=>$(id).addEventListener('input',()=>run(false)));
+['nd','tl'].forEach(id=>$(id).addEventListener('input',()=>run(false)));
 $('sw').addEventListener('change',()=>run(false));
 $('clr').onclick=()=>{$('raw').value='';run(true)};
 let ip;addEventListener('beforeinstallprompt',e=>{e.preventDefault();ip=e;$('inst').hidden=false});
